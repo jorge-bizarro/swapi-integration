@@ -41,6 +41,7 @@ provider:
                   ],
                 ]
   environment:
+    STAGE: ${self:provider.stage}
     PEOPLE_TABLE_NAME: ${self:custom.peopleTableName}
     SWAPI_ID_INDEX_NAME: ${self:custom.swapiIdIndexName}
     DYNAMODB_ENDPOINT_LOCAL: ${env:DYNAMODB_ENDPOINT_LOCAL, 'http://localhost:8000'}

@@ -1,7 +1,7 @@
 {
   "name": "swapi-integration",
   "version": "1.0.0",
-  "description": "",
+  "description": "A project to integrate with StarWars API and DynamoDB on AWS using Serverless Framework and Typescript",
   "engines": {
     "node": ">=18.19.0",
     "npm": ">=10.2.3"
@@ -16,7 +16,18 @@
     "start:dev": "sls offline start --noTimeout --stage dev",
     "prepare": "husky install"
   },
-  "keywords": [],
+  "keywords": [
+    "node",
+    "typescript",
+    "aws",
+    "serverless",
+    "dynamodb",
+    "husky",
+    "esbuild",
+    "eslint",
+    "test",
+    "clean architecture"
+  ],
   "author": "Jorge Bizarro <jorgeluisbizarroreyes@gmail.com>",
   "license": "ISC",
   "dependencies": {
