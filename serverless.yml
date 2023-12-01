@@ -1,0 +1,145 @@
+service: swapi-integration
+
+frameworkVersion: "3"
+configValidationMode: error
+
+package:
+  individually: true
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+  apiGateway:
+    minimumCompressionSize: 1024
+    shouldStartNameWithService: true
+  deploymentBucket:
+    name: ${self:service}-bucket-${self:provider.stage}
+    serverSideEncryption: AES256
+  tracing:
+    apiGateway: true
+    lambda: true
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+          Resource:
+            - Fn::GetAtt: [PeopleTable, Arn]
+            - Fn::Join:
+                [
+                  "/",
+                  [
+                    Fn::GetAtt: [PeopleTable, Arn],
+                    "index",
+                    "${self:custom.swapiIdIndexName}",
+                  ],
+                ]
+  environment:
+    PEOPLE_TABLE_NAME: ${self:custom.peopleTableName}
+    SWAPI_ID_INDEX_NAME: ${self:custom.swapiIdIndexName}
+    DYNAMODB_ENDPOINT_LOCAL: ${env:DYNAMODB_ENDPOINT_LOCAL, 'http://localhost:8000'}
+    SWAPI_ENDPOINT_URL: ${env:SWAPI_ENDPOINT_URL, 'https://swapi.py4e.com/api'}
+
+plugins:
+  - serverless-esbuild
+  - serverless-dynamodb
+  - serverless-offline
+  - serverless-deployment-bucket
+
+custom:
+  peopleTableName: people-table-${self:provider.stage}
+  swapiIdIndexName: swapiId-index-${self:provider.stage}
+  esbuild:
+    bundle: true
+    minify: true
+    sourcemap: true
+    target: node18
+    exclude:
+      - "@aws-sdk"
+    keepOutputDirectory: true
+    watch:
+      pattern: "src/**/*.{js,ts}"
+  deploymentBucket:
+    versioning: true
+    accelerate: true
+    blockPublicAccess: true
+  serverless-dynamodb:
+    stages:
+      - local
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+
+functions:
+  healthCheck:
+    handler: src/infraestructure/aws/lambda/healthCheck.healthCheckHandler
+    description: Verify health of the service
+    events:
+      - httpApi:
+          path: /healthCheck
+          method: get
+    package:
+      patterns:
+        - "src/infraestructure/aws/lambda/healthCheck.js"
+        - "package.json"
+  getAllPeople:
+    handler: src/infraestructure/aws/lambda/getAllPeople.getAllPeopleHandler
+    description: Get all people from database
+    events:
+      - httpApi:
+          path: /people
+          method: get
+    package:
+      patterns:
+        - "src/infraestructure/aws/lambda/getAllPeople.js"
+  savePerson:
+    handler: src/infraestructure/aws/lambda/savePerson.savePersonHandler
+    description: Create new person in database
+    events:
+      - httpApi:
+          path: /people
+          method: post
+    package:
+      patterns:
+        - "src/infraestructure/aws/lambda/savePerson.js"
+  getOnePersonBySwapiId:
+    handler: src/infraestructure/aws/lambda/getOnePersonBySwapiId.getOnePersonBySwapiIdHandler
+    description: Get one person from database or create from SWAPI if not exists
+    events:
+      - httpApi:
+          path: /swapi/people/{id}
+          method: get
+    package:
+      patterns:
+        - "src/infraestructure/aws/lambda/getOnePersonBySwapiId.js"
+
+resources:
+  Resources:
+    PeopleTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: uuid
+            AttributeType: S
+          - AttributeName: swapiPersonId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: uuid
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:custom.peopleTableName}
+        GlobalSecondaryIndexes:
+          - IndexName: ${self:custom.swapiIdIndexName}
+            KeySchema:
+              - AttributeName: swapiPersonId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL

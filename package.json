@@ -1,0 +1,50 @@
+{
+  "name": "swapi-integration",
+  "version": "1.0.0",
+  "description": "",
+  "engines": {
+    "node": ">=18.19.0",
+    "npm": ">=10.2.3"
+  },
+  "scripts": {
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "test": "jest",
+    "deploy:dev": "sls deploy --verbose --stage dev",
+    "deploy:prod": "sls deploy --stage prod",
+    "start:local": "cross-env SLS_DEBUG=* && sls offline start --noTimeout --reloadHandler --stage local",
+    "start:dev": "sls offline start --noTimeout --stage dev",
+    "prepare": "husky install"
+  },
+  "keywords": [],
+  "author": "Jorge Bizarro <jorgeluisbizarroreyes@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "3.462.0",
+    "@aws-sdk/lib-dynamodb": "3.464.0",
+    "@aws-sdk/util-dynamodb": "3.462.0",
+    "@types/aws-lambda": "8.10.130",
+    "@types/node": "20.10.1",
+    "@typescript-eslint/eslint-plugin": "6.13.1",
+    "@typescript-eslint/parser": "6.13.1",
+    "cross-env": "7.0.3",
+    "eslint": "8.54.0",
+    "eslint-config-google": "0.14.0",
+    "serverless-deployment-bucket": "1.6.0",
+    "serverless-dynamodb": "0.2.47",
+    "serverless-esbuild": "1.49.0",
+    "serverless-offline": "13.3.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "18.4.3",
+    "@commitlint/config-conventional": "18.4.3",
+    "@types/jest": "29.5.10",
+    "husky": "^8.0.0",
+    "jest": "29.7.0"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  }
+}
