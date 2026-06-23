@@ -44,7 +44,7 @@
     "serverless-deployment-bucket": "1.6.0",
     "serverless-dynamodb": "0.2.47",
     "serverless-esbuild": "1.49.0",
-    "serverless-offline": "13.3.0"
+    "serverless-offline": "13.10.1"
   },
   "devDependencies": {
     "@commitlint/cli": "18.4.3",
