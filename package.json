@@ -43,7 +43,7 @@
     "eslint-config-google": "0.14.0",
     "serverless-deployment-bucket": "1.6.0",
     "serverless-dynamodb": "0.2.47",
-    "serverless-esbuild": "1.49.0",
+    "serverless-esbuild": "1.57.2",
     "serverless-offline": "13.3.0"
   },
   "devDependencies": {
