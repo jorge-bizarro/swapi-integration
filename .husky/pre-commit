@@ -1,5 +1,1 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
-npm run lint
-npm test
+npm run secrets:protect && npm run typecheck && npx biome check --write --staged --no-errors-on-unmatched && npm test
