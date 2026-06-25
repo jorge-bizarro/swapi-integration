@@ -1,0 +1,110 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: SWAPI Integration API using AWS SAM
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 256
+    Runtime: nodejs24.x
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        NODE_OPTIONS: --enable-source-maps
+        AWS_REGION: us-east-1
+        AWS_ACCESS_KEY_ID: mock-key
+        AWS_SECRET_ACCESS_KEY: mock-secret
+        AWS_ENDPOINT_URL: http://host.docker.internal:4566
+        PEOPLE_TABLE_NAME: people-table-local
+        SWAPI_ID_INDEX_NAME: swapiId-index-local
+        SWAPI_ENDPOINT_URL: https://swapi.py4e.com/api
+
+Resources:
+  HealthCheckFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: healthCheck.healthCheckHandler
+      CodeUri: ./src/infraestructure/aws/lambda
+      Description: Verify health of the service
+      Events:
+        HealthCheckApi:
+          Type: HttpApi
+          Properties:
+            Path: /healthCheck
+            Method: GET
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "node24"
+        Sourcemap: true
+        SourcesContent: false
+        EntryPoints:
+          - healthCheck.ts
+
+  GetAllPeopleFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: getAllPeople.getAllPeopleHandler
+      CodeUri: ./src/infraestructure/aws/lambda
+      Description: Get all people from database
+      Events:
+        GetAllPeopleApi:
+          Type: HttpApi
+          Properties:
+            Path: /people
+            Method: GET
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "node24"
+        Sourcemap: true
+        SourcesContent: false
+        EntryPoints:
+          - getAllPeople.ts
+
+  SavePersonFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: savePerson.savePersonHandler
+      CodeUri: ./src/infraestructure/aws/lambda
+      Description: Create new person in database
+      Events:
+        SavePersonApi:
+          Type: HttpApi
+          Properties:
+            Path: /people
+            Method: POST
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "node24"
+        Sourcemap: true
+        SourcesContent: false
+        EntryPoints:
+          - savePerson.ts
+
+  GetOnePersonBySwapiIdFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: getOnePersonBySwapiId.getOnePersonBySwapiIdHandler
+      CodeUri: ./src/infraestructure/aws/lambda
+      Description: Get one person from database or create from SWAPI if not exists
+      Events:
+        GetOnePersonApi:
+          Type: HttpApi
+          Properties:
+            Path: /swapi/people/{id}
+            Method: GET
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "node24"
+        Sourcemap: true
+        SourcesContent: false
+        EntryPoints:
+          - getOnePersonBySwapiId.ts

@@ -1,0 +1,20 @@
+{
+    "files": {
+        "includes": ["src/**/*.ts", "test/**/*.ts"]
+    },
+    "formatter": {
+        "enabled": true,
+        "formatWithErrors": false,
+        "indentStyle": "space",
+        "indentWidth": 4,
+        "lineEnding": "lf",
+        "lineWidth": 160,
+        "attributePosition": "auto"
+    },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "preset": "recommended"
+        }
+    }
+}
