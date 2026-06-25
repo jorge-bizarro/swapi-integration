@@ -1,41 +1,38 @@
-import { IPerson, Person } from '../../domain/entities/person';
-import { IPersonWithTranslatedKeys } from '../../domain/entities/personWithTranslatedKeys';
-import { IStarWarsCharacter } from '../../domain/entities/starWarsCharacter';
-import { IPersonRepository } from '../../domain/repositories/personRepository';
-import { IStarWarsService } from '../../domain/services/starWarsService';
-import { generateRandomUuid } from '../../utils';
-import { IUseCase } from '../IUseCase';
+import type { IUseCase } from "@/application/IUseCase";
+import { type IPerson, Person } from "@/domain/entities/person";
+import type { IPersonWithTranslatedKeys } from "@/domain/entities/personWithTranslatedKeys";
+import type { IStarWarsCharacter } from "@/domain/entities/starWarsCharacter";
+import type { IPersonRepository } from "@/domain/repositories/personRepository";
+import type { IStarWarsService } from "@/domain/services/starWarsService";
+import { generateRandomUuid } from "@/utils";
 
 export class GetOnePersonBySwapiIdUseCase implements IUseCase<string, IPersonWithTranslatedKeys | null> {
-  private readonly personRepository: IPersonRepository;
-  private readonly starWarsService: IStarWarsService;
+    private readonly personRepository: IPersonRepository;
+    private readonly starWarsService: IStarWarsService;
 
-  constructor(
-    personRepository: IPersonRepository,
-    starWarsService: IStarWarsService
-  ) {
-    this.personRepository = personRepository;
-    this.starWarsService = starWarsService;
-  }
-
-  async execute(swapiPersonId: string): Promise<IPersonWithTranslatedKeys | null> {
-    let personList: IPerson[] = await this.personRepository.getPersonsBySwapiId(swapiPersonId);
-    let personFound: IPerson | undefined = personList.at(0);
-
-    if (!personFound) {
-      const starWarsCharacter: IStarWarsCharacter = await this.starWarsService.getCharacterById(Number(swapiPersonId));
-      const newPerson: IPerson = Person.fromStarWarsCharacter(starWarsCharacter);
-      newPerson.uuid = generateRandomUuid();
-      newPerson.swapiPersonId = swapiPersonId;
-      await this.personRepository.savePerson(newPerson);
-      personList = await this.personRepository.getPersonsBySwapiId(swapiPersonId);
-      personFound = personList.at(0);
+    constructor(personRepository: IPersonRepository, starWarsService: IStarWarsService) {
+        this.personRepository = personRepository;
+        this.starWarsService = starWarsService;
     }
 
-    if (!personFound) {
-      return null;
-    }
+    async execute(swapiPersonId: string): Promise<IPersonWithTranslatedKeys | null> {
+        let personList: IPerson[] = await this.personRepository.getPersonsBySwapiId(swapiPersonId);
+        let personFound: IPerson | undefined = personList.at(0);
 
-    return Person.toObjectWithTranslatedKeys(personFound);
-  }
+        if (!personFound) {
+            const starWarsCharacter: IStarWarsCharacter = await this.starWarsService.getCharacterById(Number(swapiPersonId));
+            const newPerson: IPerson = Person.fromStarWarsCharacter(starWarsCharacter);
+            newPerson.uuid = generateRandomUuid();
+            newPerson.swapiPersonId = swapiPersonId;
+            await this.personRepository.savePerson(newPerson);
+            personList = await this.personRepository.getPersonsBySwapiId(swapiPersonId);
+            personFound = personList.at(0);
+        }
+
+        if (!personFound) {
+            return null;
+        }
+
+        return Person.toObjectWithTranslatedKeys(personFound);
+    }
 }

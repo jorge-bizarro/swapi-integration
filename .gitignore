@@ -1,4 +1,5 @@
 node_modules
-.serverless
-.esbuild
+coverage
+env.json
+.aws-sam
 .dynamodb
