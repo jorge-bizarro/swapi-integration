@@ -36,22 +36,21 @@
   "author": "Jorge Bizarro <jorgeluisbizarroreyes@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.462.0",
-    "@aws-sdk/lib-dynamodb": "^3.464.0",
-    "@aws-sdk/util-dynamodb": "^3.462.0"
+    "@aws-sdk/client-dynamodb": "3.1091.0",
+    "@aws-sdk/lib-dynamodb": "3.464.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.1",
-    "@commitlint/cli": "^18.4.3",
-    "@commitlint/config-conventional": "^18.4.3",
-    "@types/aws-lambda": "^8.10.130",
-    "@types/node": "^24.0.0",
-    "@vitest/coverage-v8": "^4.1.9",
-    "@vitest/ui": "^4.1.9",
-    "esbuild": "^0.28.1",
-    "husky": "^9.1.7",
-    "typescript": "^5.5.0",
-    "vitest": "^4.1.9"
+    "@biomejs/biome": "2.5.1",
+    "@commitlint/cli": "21.2.1",
+    "@commitlint/config-conventional": "21.2.0",
+    "@types/aws-lambda": "8.10.130",
+    "@types/node": "26.1.1",
+    "@vitest/coverage-v8": "4.1.9",
+    "@vitest/ui": "4.1.9",
+    "esbuild": "0.28.1",
+    "husky": "9.1.7",
+    "typescript": "7.0.2",
+    "vitest": "4.1.9"
   },
   "commitlint": {
     "extends": [
