@@ -1,7 +1,4 @@
-import {
-    DynamoDBClient,
-    type DynamoDBClientConfig,
-} from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, type DynamoDBClientConfig } from "@aws-sdk/client-dynamodb";
 import {
     DynamoDBDocumentClient,
     PutCommand,
