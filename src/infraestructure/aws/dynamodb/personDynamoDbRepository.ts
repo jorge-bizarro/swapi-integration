@@ -1,15 +1,19 @@
 import {
-    type AttributeValue,
     DynamoDBClient,
     type DynamoDBClientConfig,
-    PutItemCommand,
-    type PutItemCommandInput,
-    type PutItemCommandOutput,
-    QueryCommand,
-    ScanCommand,
 } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, type QueryCommandInput, type QueryCommandOutput, type ScanCommandInput, type ScanCommandOutput } from "@aws-sdk/lib-dynamodb";
-import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
+import {
+    DynamoDBDocumentClient,
+    PutCommand,
+    type PutCommandInput,
+    type PutCommandOutput,
+    QueryCommand,
+    type QueryCommandInput,
+    type QueryCommandOutput,
+    ScanCommand,
+    type ScanCommandInput,
+    type ScanCommandOutput,
+} from "@aws-sdk/lib-dynamodb";
 import type { IPerson } from "@/domain/entities/person";
 import type { IPersonRepository } from "@/domain/repositories/personRepository";
 
@@ -31,24 +35,19 @@ export class PersonDynamoDbRepository implements IPersonRepository {
         const inputCommand: ScanCommandInput = {
             TableName: this.personTableName,
         };
-        const command: ScanCommand = new ScanCommand(inputCommand);
+        const command = new ScanCommand(inputCommand);
         const result: ScanCommandOutput = await this.dynamoDbDocumentClient.send(command);
 
-        return result.Items?.map((item) => unmarshall(item) as IPerson) || [];
+        return (result.Items as IPerson[]) || [];
     }
 
     async savePerson(newPerson: IPerson): Promise<void> {
-        const item: Record<string, AttributeValue> | undefined = marshall(newPerson, {
-            convertClassInstanceToMap: true,
-            removeUndefinedValues: true,
-            convertEmptyValues: true,
-        });
-        const inputCommand: PutItemCommandInput = {
+        const inputCommand: PutCommandInput = {
             TableName: this.personTableName,
-            Item: item,
+            Item: newPerson,
         };
-        const command: PutItemCommand = new PutItemCommand(inputCommand);
-        const result: PutItemCommandOutput = await this.dynamoDbDocumentClient.send(command);
+        const command = new PutCommand(inputCommand);
+        const result: PutCommandOutput = await this.dynamoDbDocumentClient.send(command);
         console.log("PersonDynamoDbRepository -> savePerson -> result", result);
     }
 
@@ -57,11 +56,11 @@ export class PersonDynamoDbRepository implements IPersonRepository {
             TableName: this.personTableName,
             IndexName: this.swapiIdIndexName,
             KeyConditionExpression: "swapiPersonId = :swapiPersonId",
-            ExpressionAttributeValues: marshall({ ":swapiPersonId": swapiPersonId }),
+            ExpressionAttributeValues: { ":swapiPersonId": swapiPersonId },
         };
-        const command: QueryCommand = new QueryCommand(inputCommand);
+        const command = new QueryCommand(inputCommand);
         const result: QueryCommandOutput = await this.dynamoDbDocumentClient.send(command);
 
-        return result.Items?.map((item) => unmarshall(item) as IPerson) || [];
+        return (result.Items as IPerson[]) || [];
     }
 }
