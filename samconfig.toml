@@ -8,4 +8,4 @@ cached = true
 parallel = true
 
 [default.local_start_api.parameters]
-warm_containers = "EAGER"
+# warm_containers = "EAGER"
