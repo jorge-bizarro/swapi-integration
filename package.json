@@ -36,7 +36,7 @@
   "author": "Jorge Bizarro <jorgeluisbizarroreyes@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "3.1091.0",
+    "@aws-sdk/client-dynamodb": "3.1096.0",
     "@aws-sdk/lib-dynamodb": "3.464.0"
   },
   "devDependencies": {
