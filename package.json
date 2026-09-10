@@ -50,7 +50,7 @@
     "esbuild": "0.28.1",
     "husky": "9.1.7",
     "typescript": "7.0.2",
-    "vitest": "4.1.9"
+    "vitest": "4.1.11"
   },
   "commitlint": {
     "extends": [
